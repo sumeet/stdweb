@@ -5,10 +5,8 @@
 // TODO: verify that this works correctly with pinned futures
 // TODO: use FuturesUnordered (similar to LocalPool)
 
-use futures_core::future::{FutureObj, LocalFutureObj};
 use futures_executor::enter;
-use futures_core::task::{Spawn, SpawnError};
-use futures_util::task::{self, ArcWake};
+use futures_util::task::{self, ArcWake, SpawnError,Spawn};
 use std::future::Future;
 use std::task::{Poll, Context};
 use std::pin::Pin;
@@ -19,6 +17,7 @@ use std::collections::VecDeque;
 use std::cmp;
 use webcore::try_from::TryInto;
 use webcore::value::Reference;
+use futures_util::future::{LocalFutureObj, FutureObj};
 
 
 // TODO: Determine optimal values for these constants
@@ -322,7 +321,7 @@ impl EventLoopExecutor {
 
 impl Spawn for EventLoopExecutor {
     #[inline]
-    fn spawn_obj( &mut self,  future: FutureObj< 'static, () > ) -> Result< (), SpawnError > {
+    fn spawn_obj( &self,  future: FutureObj< 'static, () > ) -> Result< (), SpawnError > {
         self.spawn_local( future.into() );
         Ok( () )
     }
